@@ -2,6 +2,8 @@
 
 > A modern blog platform dedicated to Malawi's tech ecosystem and innovation
 
+**Note**: The project name "Ngwenya" is subject to change during development.
+
 Project Ngwenya is a collaborative blog site focused on sharing and promoting technology news, insights, and developments from Malawi. The platform serves as a hub for the Malawian tech community to share knowledge, showcase innovations, and connect with fellow tech enthusiasts.
 
 ## 🌟 Features
