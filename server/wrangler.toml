@@ -1,0 +1,31 @@
+name = "ngwenya-server"
+main = "src/index.js"
+compatibility_date = "2024-01-01"
+
+[env.development]
+name = "ngwenya-server-dev"
+
+[env.production]
+name = "ngwenya-server-prod"
+
+# Cloudflare D1 Database Configuration
+[[d1_databases]]
+binding = "DB"
+database_name = "ngwenya-db"
+database_id = "" # Add your D1 database ID here
+
+# Environment Variables
+[vars]
+NODE_ENV = "production"
+
+# KV for session storage (optional)
+[[kv_namespaces]]
+binding = "SESSIONS"
+id = "" # Add your KV namespace ID here
+preview_id = "" # Add your preview KV namespace ID here
+
+# R2 for file uploads
+[[r2_buckets]]
+binding = "UPLOADS"
+bucket_name = "ngwenya-uploads"
+preview_bucket_name = "ngwenya-uploads-preview"
