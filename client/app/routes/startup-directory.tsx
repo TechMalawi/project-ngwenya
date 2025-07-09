@@ -171,12 +171,12 @@ export default function StartupDirectory() {
                             Are you building the next big thing in Malawi's tech scene? Join our directory and
                             connect with the community, investors, and potential partners.
                         </p>
-                        <button
-                            type="button"
+                        <Link
+                            to="/startup-directory/submit"
                             className="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
                         >
                             Submit Your Startup
-                        </button>
+                        </Link>
                     </div>
                 </div>
             </main>

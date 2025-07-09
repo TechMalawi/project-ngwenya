@@ -1,3 +1,4 @@
+import { Link } from "react-router";
 import { Footer } from "../components/Footer";
 import { Header } from "../components/Header";
 
@@ -31,18 +32,18 @@ export default function Contributors() {
                             Join our community of tech leaders and help shape the narrative of Malawi's digital transformation
                         </p>
                         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                            <button
-                                type="button"
-                                className="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
+                            <Link
+                                to="/contributors/apply"
+                                className="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors text-center"
                             >
                                 Become a Contributor
-                            </button>
-                            <button
-                                type="button"
-                                className="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors"
+                            </Link>
+                            <Link
+                                to="/contributors/guidelines"
+                                className="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors text-center"
                             >
                                 Contributor Guidelines
-                            </button>
+                            </Link>
                         </div>
                     </div>
                 </div>
