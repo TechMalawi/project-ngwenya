@@ -23,8 +23,7 @@ Before you begin, ensure you have the following installed:
 - Node.js (v18 or higher)
 - npm or yarn package manager
 - Git
-- Wrangler CLI (Cloudflare Workers CLI)
-- Cloudflare account
+- PostgreSQL (for Strapi backend)
 
 ### Installation
 
@@ -34,26 +33,21 @@ git clone https://github.com/yourusername/ngwenya.git
 cd ngwenya
 ```
 
-2. Install Wrangler CLI globally:
-```bash
-npm install -g wrangler
-```
-
-3. Set up the Strapi backend:
+2. Set up the Strapi backend:
 ```bash
 cd backend
 npm install
 ```
 
-4. Configure Cloudflare Workers for Strapi:
+3. Configure the database:
 ```bash
-# Login to Cloudflare
-wrangler login
+# Create a PostgreSQL database
+# Update the database configuration in config/database.ts
+```
 
-# Set up D1 database
-wrangler d1 create ngwenya-db
-
-# Update wrangler.toml with your database ID
+4. Start the Strapi backend:
+```bash
+npm run develop
 ```
 
 5. Set up the React Router frontend:
@@ -65,28 +59,15 @@ npm install
 6. Set up environment variables:
 ```bash
 cp .env.example .env.local
-# Add your Strapi backend URL and Cloudflare configurations
+# Add your Strapi backend URL and other configurations
 ```
 
-7. Start the development servers:
+7. Start the frontend development server:
 ```bash
-# Backend (in one terminal)
-cd backend && npm run develop
-
-# Frontend (in another terminal)
-cd frontend && npm run dev
+npm run dev
 ```
 
-8. Deploy to Cloudflare Workers:
-```bash
-# Deploy backend
-cd backend && wrangler deploy
-
-# Deploy frontend
-cd frontend && wrangler deploy
-```
-
-9. Open your deployed URLs for both frontend and backend
+8. Open [http://localhost:5173](http://localhost:5173) for the frontend and [http://localhost:1337](http://localhost:1337) for Strapi admin
 
 ## 🤝 Contributing
 
@@ -134,9 +115,9 @@ We welcome contributions from the Malawi tech community! Here's how you can get 
 - **Authentication**: Strapi Authentication
 - **Content Management**: Strapi Admin Panel
 - **Media Management**: Strapi Media Library
-- **Deployment**: Cloudflare Workers
-- **Database**: Cloudflare D1 (SQLite) or external PostgreSQL
-- **Storage**: Cloudflare R2 (for media files)
+- **Deployment**: 
+  - Frontend: Vercel/Netlify
+  - Backend: Railway/Heroku/DigitalOcean
 - **Analytics**: Google Analytics
 
 ## 📊 Project Structure
@@ -149,7 +130,6 @@ ngwenya/
 │   ├── styles/        # Global styles and Tailwind config
 │   ├── lib/          # Utility functions and configurations
 │   ├── types/        # TypeScript type definitions
-│   ├── wrangler.toml # Cloudflare Workers configuration
 │   └── tests/        # Frontend test files
 ├── backend/           # Strapi CMS backend
 │   ├── api/          # API endpoints and controllers
@@ -158,7 +138,6 @@ ngwenya/
 │   ├── extensions/   # Strapi extensions
 │   ├── middlewares/  # Custom middlewares
 │   ├── policies/     # Access control policies
-│   ├── wrangler.toml # Cloudflare Workers configuration
 │   └── public/       # Static assets for Strapi
 └── docs/             # Project documentation
 ```
