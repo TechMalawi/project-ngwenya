@@ -33,9 +33,14 @@ git clone https://github.com/yourusername/ngwenya.git
 cd ngwenya
 ```
 
-2. Set up the Strapi backend:
+2. Install dependencies for the entire monorepo:
 ```bash
-cd backend
+npm install
+```
+
+3. Set up the Strapi backend:
+```bash
+cd server
 npm install
 ```
 
@@ -52,22 +57,76 @@ npm run develop
 
 5. Set up the React Router frontend:
 ```bash
-cd ../frontend
+cd ../client
 npm install
 ```
 
 6. Set up environment variables:
 ```bash
+# In server directory
+cd ../server
 cp .env.example .env.local
 # Add your Strapi backend URL and other configurations
+
+# In client directory  
+cd ../client
+cp .env.example .env.local
 ```
 
-7. Start the frontend development server:
+7. Start the development servers:
 ```bash
+# From the root directory - starts both client and server
 npm run dev
+
+# Or start them individually:
+npm run dev:client  # React Router frontend
+npm run dev:server  # Strapi backend
 ```
 
 8. Open [http://localhost:5173](http://localhost:5173) for the frontend and [http://localhost:1337](http://localhost:1337) for Strapi admin
+
+## 🧹 Code Quality
+
+This project uses [Biome.js](https://biomejs.dev/) for linting, formatting, and code organization in a monorepo setup.
+
+### Available Scripts
+
+```bash
+# Lint all files
+npm run lint
+
+# Lint and fix all files
+npm run lint:fix
+
+# Format all files
+npm run format
+
+# Format and write all files
+npm run format:write
+
+# Check and fix all issues (recommended)
+npm run check:write
+
+# Lint specific workspace
+npm run lint:client
+npm run lint:server
+
+# Format specific workspace  
+npm run format:client
+npm run format:server
+```
+
+### Pre-commit Hooks
+
+Consider setting up pre-commit hooks to automatically run Biome:
+
+```bash
+# Install husky for git hooks
+npm install --save-dev husky
+
+# Set up pre-commit hook
+npx husky add .husky/pre-commit "npm run check:write"
+```
 
 ## 🤝 Contributing
 
@@ -124,22 +183,28 @@ We welcome contributions from the Malawi tech community! Here's how you can get 
 
 ```
 ngwenya/
-├── frontend/           # React Router v7 SSR application
+├── .vscode/            # VSCode configuration
+├── client/             # React Router v7 SSR application
 │   ├── app/           # App routes and components
 │   ├── components/    # Reusable UI components
 │   ├── styles/        # Global styles and Tailwind config
 │   ├── lib/          # Utility functions and configurations
 │   ├── types/        # TypeScript type definitions
+│   ├── biome.json    # Client-specific Biome configuration
 │   └── tests/        # Frontend test files
-├── backend/           # Strapi CMS backend
+├── server/            # Strapi CMS backend
 │   ├── api/          # API endpoints and controllers
 │   ├── components/   # Reusable Strapi components
 │   ├── config/       # Strapi configuration
 │   ├── extensions/   # Strapi extensions
 │   ├── middlewares/  # Custom middlewares
 │   ├── policies/     # Access control policies
+│   ├── biome.json    # Server-specific Biome configuration
 │   └── public/       # Static assets for Strapi
-└── docs/             # Project documentation
+├── docs/             # Project documentation
+├── biome.json        # Root Biome configuration
+├── .biomeignore      # Biome ignore patterns
+└── package.json      # Root package.json (monorepo)
 ```
 
 ## 🌍 Community
