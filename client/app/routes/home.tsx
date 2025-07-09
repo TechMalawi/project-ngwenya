@@ -1,3 +1,4 @@
+import { Link } from "react-router";
 import { Footer } from "../components/Footer";
 import { Header } from "../components/Header";
 
@@ -47,12 +48,18 @@ export default function Home() {
 						innovation in Africa.
 					</p>
 					<div className="flex flex-col sm:flex-row gap-4 justify-center">
-						<button className="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+						<Link
+							to="/articles"
+							className="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors text-center"
+						>
 							Explore Articles
-						</button>
-						<button className="border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 px-8 py-3 rounded-lg font-semibold hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+						</Link>
+						<Link
+							to="/contributors"
+							className="border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 px-8 py-3 rounded-lg font-semibold hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-center"
+						>
 							Become a Contributor
-						</button>
+						</Link>
 					</div>
 				</div>
 			</section>
@@ -78,12 +85,12 @@ export default function Home() {
 								<p className="text-gray-600 dark:text-gray-300 mb-4">
 									{category.description}
 								</p>
-								<a
-									href="#"
+								<Link
+									to="/categories"
 									className="text-blue-600 dark:text-blue-400 font-semibold hover:underline"
 								>
 									Read Articles →
-								</a>
+								</Link>
 							</div>
 						))}
 					</div>
@@ -152,6 +159,7 @@ const categories = [
 				fill="none"
 				stroke="currentColor"
 				viewBox="0 0 24 24"
+				aria-hidden="true"
 			>
 				<path
 					strokeLinecap="round"
@@ -172,6 +180,7 @@ const categories = [
 				fill="none"
 				stroke="currentColor"
 				viewBox="0 0 24 24"
+				aria-hidden="true"
 			>
 				<path
 					strokeLinecap="round"
@@ -191,6 +200,7 @@ const categories = [
 				fill="none"
 				stroke="currentColor"
 				viewBox="0 0 24 24"
+				aria-hidden="true"
 			>
 				<path
 					strokeLinecap="round"
@@ -210,6 +220,7 @@ const categories = [
 				fill="none"
 				stroke="currentColor"
 				viewBox="0 0 24 24"
+				aria-hidden="true"
 			>
 				<path
 					strokeLinecap="round"

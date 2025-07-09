@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router";
 
 export function Header() {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -7,7 +8,7 @@ export function Header() {
         <header className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between items-center py-6">
-                    <div className="flex items-center space-x-3">
+                    <Link to="/" className="flex items-center space-x-3">
                         <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
                             <span className="text-white font-bold text-xl">N</span>
                         </div>
@@ -19,34 +20,40 @@ export function Header() {
                                 Malawi Tech Blog
                             </p>
                         </div>
-                    </div>
+                    </Link>
 
                     {/* Desktop Navigation */}
                     <nav className="hidden md:flex space-x-8">
-                        <a
-                            href="/articles"
+                        <Link
+                            to="/articles"
                             className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                         >
                             Articles
-                        </a>
-                        <a
-                            href="/categories"
+                        </Link>
+                        <Link
+                            to="/categories"
                             className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                         >
                             Categories
-                        </a>
-                        <a
-                            href="/contributors"
+                        </Link>
+                        <Link
+                            to="/startup-directory"
+                            className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                        >
+                            Startups
+                        </Link>
+                        <Link
+                            to="/contributors"
                             className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                         >
                             Contributors
-                        </a>
-                        <a
-                            href="/about"
+                        </Link>
+                        <Link
+                            to="/about"
                             className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                         >
                             About
-                        </a>
+                        </Link>
                     </nav>
 
                     {/* Mobile menu button */}
@@ -61,6 +68,7 @@ export function Header() {
                             stroke="currentColor"
                             fill="none"
                             viewBox="0 0 24 24"
+                            aria-hidden="true"
                         >
                             {isMobileMenuOpen ? (
                                 <path
@@ -85,34 +93,41 @@ export function Header() {
                 {isMobileMenuOpen && (
                     <div className="md:hidden border-t border-gray-200 dark:border-gray-700 pt-4 pb-6">
                         <nav className="flex flex-col space-y-4">
-                            <a
-                                href="/articles"
+                            <Link
+                                to="/articles"
                                 className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors px-2 py-2 text-base font-medium"
                                 onClick={() => setIsMobileMenuOpen(false)}
                             >
                                 Articles
-                            </a>
-                            <a
-                                href="/categories"
+                            </Link>
+                            <Link
+                                to="/categories"
                                 className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors px-2 py-2 text-base font-medium"
                                 onClick={() => setIsMobileMenuOpen(false)}
                             >
                                 Categories
-                            </a>
-                            <a
-                                href="/contributors"
+                            </Link>
+                            <Link
+                                to="/startup-directory"
+                                className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors px-2 py-2 text-base font-medium"
+                                onClick={() => setIsMobileMenuOpen(false)}
+                            >
+                                Startups
+                            </Link>
+                            <Link
+                                to="/contributors"
                                 className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors px-2 py-2 text-base font-medium"
                                 onClick={() => setIsMobileMenuOpen(false)}
                             >
                                 Contributors
-                            </a>
-                            <a
-                                href="/about"
+                            </Link>
+                            <Link
+                                to="/about"
                                 className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors px-2 py-2 text-base font-medium"
                                 onClick={() => setIsMobileMenuOpen(false)}
                             >
                                 About
-                            </a>
+                            </Link>
                         </nav>
                     </div>
                 )}
