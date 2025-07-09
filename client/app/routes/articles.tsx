@@ -1,3 +1,4 @@
+import { Link } from "react-router";
 import { Footer } from "../components/Footer";
 import { Header } from "../components/Header";
 
@@ -52,12 +53,12 @@ export default function Articles() {
                                             <p className="text-xs text-gray-500 dark:text-gray-400">Dec 15, 2024</p>
                                         </div>
                                     </div>
-                                    <button
-                                        type="button"
+                                    <Link
+                                        to="/articles/rise-of-fintech-malawi"
                                         className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
                                     >
                                         Read More
-                                    </button>
+                                    </Link>
                                 </div>
                             </div>
                         </div>
@@ -89,9 +90,12 @@ export default function Articles() {
                                             <p className="text-xs text-gray-500 dark:text-gray-400">{article.date}</p>
                                         </div>
                                     </div>
-                                    <a href="#" className="text-blue-600 dark:text-blue-400 hover:underline text-sm font-medium">
+                                    <Link
+                                        to={`/articles/${article.slug}`}
+                                        className="text-blue-600 dark:text-blue-400 hover:underline text-sm font-medium"
+                                    >
                                         Read →
-                                    </a>
+                                    </Link>
                                 </div>
                             </div>
                         </article>
@@ -118,6 +122,7 @@ const mockArticles = [
     {
         id: 1,
         title: "Digital Agriculture: Smart Farming in Rural Malawi",
+        slug: "digital-agriculture-smart-farming-rural-malawi",
         excerpt: "How IoT sensors and mobile apps are helping smallholder farmers increase crop yields and optimize resource usage.",
         category: "Agriculture Tech",
         author: "Grace Phiri",
@@ -126,6 +131,7 @@ const mockArticles = [
     {
         id: 2,
         title: "Malawi's First Tech Unicorn: A Vision for 2030",
+        slug: "malawi-first-tech-unicorn-vision-2030",
         excerpt: "Analyzing the potential for Malawi to produce its first billion-dollar tech company and what it would take.",
         category: "Startup News",
         author: "Michael Tembo",
@@ -134,6 +140,7 @@ const mockArticles = [
     {
         id: 3,
         title: "E-Government Success: Digital ID Rollout",
+        slug: "e-government-success-digital-id-rollout",
         excerpt: "The successful implementation of Malawi's digital identity system and its impact on service delivery.",
         category: "Government Tech",
         author: "Sarah Mwale",
@@ -142,6 +149,7 @@ const mockArticles = [
     {
         id: 4,
         title: "EdTech Revolution: Online Learning Platforms",
+        slug: "edtech-revolution-online-learning-platforms",
         excerpt: "How local EdTech startups are bridging the digital divide in Malawi's education sector.",
         category: "Education",
         author: "David Kanyama",
@@ -150,6 +158,7 @@ const mockArticles = [
     {
         id: 5,
         title: "Mobile Health Solutions Saving Lives",
+        slug: "mobile-health-solutions-saving-lives",
         excerpt: "Innovative mobile health applications providing healthcare access to remote communities.",
         category: "HealthTech",
         author: "Mercy Chikwawa",
@@ -158,6 +167,7 @@ const mockArticles = [
     {
         id: 6,
         title: "Women in Tech: Breaking Barriers",
+        slug: "women-in-tech-breaking-barriers",
         excerpt: "Celebrating female tech leaders and entrepreneurs who are driving change in Malawi's tech scene.",
         category: "Diversity",
         author: "Esther Banda",

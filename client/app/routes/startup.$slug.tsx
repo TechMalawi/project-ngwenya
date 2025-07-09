@@ -1,6 +1,6 @@
-import { useParams } from "react-router";
-import { Header } from "../components/Header";
+import { useParams, Link } from "react-router";
 import { Footer } from "../components/Footer";
+import { Header } from "../components/Header";
 
 export function meta() {
     return [
@@ -321,15 +321,15 @@ export default function Startup() {
 
                 {/* Navigation */}
                 <div className="mt-12 pt-8 border-t border-gray-200 dark:border-gray-700 flex justify-between items-center">
-                    <button
-                        type="button"
+                    <Link
+                        to="/startup-directory"
                         className="flex items-center space-x-2 text-blue-600 dark:text-blue-400 hover:underline"
                     >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                         </svg>
                         <span>Back to Startup Directory</span>
-                    </button>
+                    </Link>
 
                     <div className="flex space-x-4">
                         <button

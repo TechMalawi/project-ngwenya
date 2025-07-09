@@ -1,3 +1,4 @@
+import { Link } from "react-router";
 import { Footer } from "../components/Footer";
 import { Header } from "../components/Header";
 
@@ -150,12 +151,12 @@ export default function StartupDirectory() {
                                 </div>
                             </div>
 
-                            <button
-                                type="button"
-                                className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+                            <Link
+                                to={`/startup-directory/${startup.slug}`}
+                                className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium text-center block"
                             >
                                 View Profile
-                            </button>
+                            </Link>
                         </div>
                     ))}
                 </div>
@@ -189,6 +190,7 @@ const startups = [
     {
         id: 1,
         name: "AgriConnect",
+        slug: "agriconnect",
         industry: "AgriTech",
         description: "Connecting smallholder farmers with markets through a digital platform for crop sales and agricultural insights.",
         tags: ["Agriculture", "Mobile App", "Market Access"],
@@ -200,6 +202,7 @@ const startups = [
     {
         id: 2,
         name: "EduLearn",
+        slug: "edulearn",
         industry: "EdTech",
         description: "Interactive online learning platform providing quality education content in local languages.",
         tags: ["Education", "Online Learning", "Local Content"],
@@ -211,6 +214,7 @@ const startups = [
     {
         id: 3,
         name: "HealthLink",
+        slug: "healthlink",
         industry: "HealthTech",
         description: "Telemedicine platform connecting rural patients with healthcare providers via mobile technology.",
         tags: ["Healthcare", "Telemedicine", "Rural Access"],
@@ -222,6 +226,7 @@ const startups = [
     {
         id: 4,
         name: "LogiFlow",
+        slug: "logiflow",
         industry: "Logistics",
         description: "Smart logistics and delivery management system for small and medium businesses.",
         tags: ["Logistics", "Delivery", "SME Solutions"],
@@ -233,6 +238,7 @@ const startups = [
     {
         id: 5,
         name: "GreenEnergy Solutions",
+        slug: "greenenergy-solutions",
         industry: "CleanTech",
         description: "Solar energy management and monitoring systems for residential and commercial use.",
         tags: ["Solar", "Clean Energy", "IoT"],
@@ -244,6 +250,7 @@ const startups = [
     {
         id: 6,
         name: "DataInsights MW",
+        slug: "datainsights-mw",
         industry: "Analytics",
         description: "Business intelligence and data analytics platform for African businesses.",
         tags: ["Data Analytics", "Business Intelligence", "SaaS"],
