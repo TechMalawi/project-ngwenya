@@ -20,12 +20,43 @@ Project Ngwenya is a collaborative blog site focused on sharing and promoting te
 ### Prerequisites
 
 Before you begin, ensure you have the following installed:
-- Node.js (v18 or higher)
-- npm or yarn package manager
-- Git
-- PostgreSQL (for Strapi backend)
+- **Option 1 (Docker - Recommended)**: Docker and Docker Compose
+- **Option 2 (Local)**: Node.js (v20 or higher), npm package manager, Git, PostgreSQL (for Strapi backend)
 
 ### Installation
+
+#### Option 1: Docker Development (Recommended)
+
+1. Clone the repository:
+```bash
+git clone https://github.com/yourusername/ngwenya.git
+cd ngwenya
+```
+
+2. Start the development environment:
+```bash
+# Start all services
+make up
+
+# Or start and watch logs
+make dev
+```
+
+3. Access the applications:
+   - **Frontend**: [http://localhost:1336](http://localhost:1336)
+   - **Strapi Admin**: [http://localhost:1337/admin](http://localhost:1337/admin)
+
+4. Available Docker commands:
+```bash
+make up          # Start all services
+make down        # Stop all services
+make logs        # View logs
+make restart     # Restart services
+make clean       # Clean restart
+make help        # See all commands
+```
+
+#### Option 2: Local Development
 
 1. Clone the repository:
 ```bash
@@ -44,24 +75,24 @@ cd server
 npm install
 ```
 
-3. Configure the database:
+4. Configure the database:
 ```bash
 # Create a PostgreSQL database
 # Update the database configuration in config/database.ts
 ```
 
-4. Start the Strapi backend:
+5. Start the Strapi backend:
 ```bash
 npm run develop
 ```
 
-5. Set up the React Router frontend:
+6. Set up the React Router frontend:
 ```bash
 cd ../client
 npm install
 ```
 
-6. Set up environment variables:
+7. Set up environment variables:
 ```bash
 # In server directory
 cd ../server
@@ -73,7 +104,7 @@ cd ../client
 cp .env.example .env.local
 ```
 
-7. Start the development servers:
+8. Start the development servers:
 ```bash
 # From the root directory - starts both client and server
 npm run dev
@@ -83,52 +114,70 @@ npm run dev:client  # React Router frontend
 npm run dev:server  # Strapi backend
 ```
 
-8. Open [http://localhost:5173](http://localhost:5173) for the frontend and [http://localhost:1337](http://localhost:1337) for Strapi admin
+9. Open [http://localhost:1336](http://localhost:1336) for the frontend and [http://localhost:1337](http://localhost:1337) for Strapi admin
 
-## 🧹 Code Quality
+## 🐳 Docker Development
 
-This project uses [Biome.js](https://biomejs.dev/) for linting, formatting, and code organization in a monorepo setup.
+This project includes a complete Docker development environment for easy setup and consistent development across different machines.
 
-### Available Scripts
-
-```bash
-# Lint all files
-npm run lint
-
-# Lint and fix all files
-npm run lint:fix
-
-# Format all files
-npm run format
-
-# Format and write all files
-npm run format:write
-
-# Check and fix all issues (recommended)
-npm run check:write
-
-# Lint specific workspace
-npm run lint:client
-npm run lint:server
-
-# Format specific workspace  
-npm run format:client
-npm run format:server
-```
-
-### Pre-commit Hooks
-
-Consider setting up pre-commit hooks to automatically run Biome:
+### Quick Start with Docker
 
 ```bash
-# Install husky for git hooks
-npm install --save-dev husky
+# Clone and start
+git clone https://github.com/yourusername/ngwenya.git
+cd ngwenya
+make up
 
-# Set up pre-commit hook
-npx husky add .husky/pre-commit "npm run check:write"
+# Start development with logs
+make dev
 ```
 
-## 🤝 Contributing
+### Docker Services
+
+- **ngwenya_client**: React Router frontend on port 1336
+- **ngwenya_server**: Strapi CMS backend on port 1337
+- **Volumes**: Automatic file mounting for hot reloading
+- **Network**: Isolated development network
+
+### Available Make Commands
+
+| Command | Description |
+|---------|-------------|
+| `make up` | Start all services in detached mode |
+| `make down` | Stop all services |
+| `make dev` | Start services and follow logs |
+| `make restart` | Restart all services |
+| `make logs` | Show logs for all services |
+| `make logs-client` | Show client logs only |
+| `make logs-server` | Show server logs only |
+| `make status` | Show service status |
+| `make clean` | Stop and remove volumes |
+| `make fresh` | Clean restart |
+| `make shell-client` | Open shell in client container |
+| `make shell-server` | Open shell in server container |
+| `make help` | Show all available commands |
+
+### Development Workflow
+
+```bash
+# Start development environment
+make up
+
+# Make code changes (auto-reload enabled)
+# View logs if needed
+make logs
+
+# Restart services if needed
+make restart
+
+# Clean restart when needed
+make fresh
+
+# Stop when done
+make down
+```
+
+##  Contributing
 
 We welcome contributions from the Malawi tech community! Here's how you can get involved:
 
@@ -202,6 +251,8 @@ ngwenya/
 │   ├── biome.json    # Server-specific Biome configuration
 │   └── public/       # Static assets for Strapi
 ├── docs/             # Project documentation
+├── docker-compose.yml # Docker development environment
+├── Makefile          # Development commands
 ├── biome.json        # Root Biome configuration
 ├── .biomeignore      # Biome ignore patterns
 └── package.json      # Root package.json (monorepo)
