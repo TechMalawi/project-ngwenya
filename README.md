@@ -20,13 +20,12 @@ Project Ngwenya is a collaborative blog site focused on sharing and promoting te
 ### Prerequisites
 
 Before you begin, ensure you have the following installed:
-- Node.js (v18 or higher)
-- npm or yarn package manager
-- Git
-- Wrangler CLI (Cloudflare Workers CLI)
-- Cloudflare account
+- **Option 1 (Docker - Recommended)**: Docker and Docker Compose
+- **Option 2 (Local)**: Node.js (v20 or higher), npm package manager, Git, PostgreSQL (for Strapi backend)
 
 ### Installation
+
+#### Option 1: Docker Development (Recommended)
 
 1. Clone the repository:
 ```bash
@@ -34,61 +33,151 @@ git clone https://github.com/yourusername/ngwenya.git
 cd ngwenya
 ```
 
-2. Install Wrangler CLI globally:
+2. Start the development environment:
 ```bash
-npm install -g wrangler
+# Start all services
+make up
+
+# Or start and watch logs
+make dev
+```
+
+3. Access the applications:
+   - **Frontend**: [http://localhost:1336](http://localhost:1336)
+   - **Strapi Admin**: [http://localhost:1337/admin](http://localhost:1337/admin)
+
+4. Available Docker commands:
+```bash
+make up          # Start all services
+make down        # Stop all services
+make logs        # View logs
+make restart     # Restart services
+make clean       # Clean restart
+make help        # See all commands
+```
+
+#### Option 2: Local Development
+
+1. Clone the repository:
+```bash
+git clone https://github.com/yourusername/ngwenya.git
+cd ngwenya
+```
+
+2. Install dependencies for the entire monorepo:
+```bash
+npm install
 ```
 
 3. Set up the Strapi backend:
 ```bash
-cd backend
+cd server
 npm install
 ```
 
-4. Configure Cloudflare Workers for Strapi:
+4. Configure the database:
 ```bash
-# Login to Cloudflare
-wrangler login
-
-# Set up D1 database
-wrangler d1 create ngwenya-db
-
-# Update wrangler.toml with your database ID
+# Create a PostgreSQL database
+# Update the database configuration in config/database.ts
 ```
 
-5. Set up the React Router frontend:
+5. Start the Strapi backend:
 ```bash
-cd ../frontend
+npm run develop
+```
+
+6. Set up the React Router frontend:
+```bash
+cd ../client
 npm install
 ```
 
-6. Set up environment variables:
+7. Set up environment variables:
 ```bash
+# In server directory
+cd ../server
 cp .env.example .env.local
-# Add your Strapi backend URL and Cloudflare configurations
+# Add your Strapi backend URL and other configurations
+
+# In client directory  
+cd ../client
+cp .env.example .env.local
 ```
 
-7. Start the development servers:
+8. Start the development servers:
 ```bash
-# Backend (in one terminal)
-cd backend && npm run develop
+# From the root directory - starts both client and server
+npm run dev
 
-# Frontend (in another terminal)
-cd frontend && npm run dev
+# Or start them individually:
+npm run dev:client  # React Router frontend
+npm run dev:server  # Strapi backend
 ```
 
-8. Deploy to Cloudflare Workers:
+9. Open [http://localhost:1336](http://localhost:1336) for the frontend and [http://localhost:1337](http://localhost:1337) for Strapi admin
+
+## 🐳 Docker Development
+
+This project includes a complete Docker development environment for easy setup and consistent development across different machines.
+
+### Quick Start with Docker
+
 ```bash
-# Deploy backend
-cd backend && wrangler deploy
+# Clone and start
+git clone https://github.com/yourusername/ngwenya.git
+cd ngwenya
+make up
 
-# Deploy frontend
-cd frontend && wrangler deploy
+# Start development with logs
+make dev
 ```
 
-9. Open your deployed URLs for both frontend and backend
+### Docker Services
 
-## 🤝 Contributing
+- **ngwenya_client**: React Router frontend on port 1336
+- **ngwenya_server**: Strapi CMS backend on port 1337
+- **Volumes**: Automatic file mounting for hot reloading
+- **Network**: Isolated development network
+
+### Available Make Commands
+
+| Command | Description |
+|---------|-------------|
+| `make up` | Start all services in detached mode |
+| `make down` | Stop all services |
+| `make dev` | Start services and follow logs |
+| `make restart` | Restart all services |
+| `make logs` | Show logs for all services |
+| `make logs-client` | Show client logs only |
+| `make logs-server` | Show server logs only |
+| `make status` | Show service status |
+| `make clean` | Stop and remove volumes |
+| `make fresh` | Clean restart |
+| `make shell-client` | Open shell in client container |
+| `make shell-server` | Open shell in server container |
+| `make help` | Show all available commands |
+
+### Development Workflow
+
+```bash
+# Start development environment
+make up
+
+# Make code changes (auto-reload enabled)
+# View logs if needed
+make logs
+
+# Restart services if needed
+make restart
+
+# Clean restart when needed
+make fresh
+
+# Stop when done
+make down
+```
+
+##  Contributing
 
 We welcome contributions from the Malawi tech community! Here's how you can get involved:
 
@@ -134,33 +223,39 @@ We welcome contributions from the Malawi tech community! Here's how you can get 
 - **Authentication**: Strapi Authentication
 - **Content Management**: Strapi Admin Panel
 - **Media Management**: Strapi Media Library
-- **Deployment**: Cloudflare Workers
-- **Database**: Cloudflare D1 (SQLite) or external PostgreSQL
-- **Storage**: Cloudflare R2 (for media files)
+- **Deployment**: 
+  - Frontend: Vercel/Netlify
+  - Backend: Railway/Heroku/DigitalOcean
 - **Analytics**: Google Analytics
 
 ## 📊 Project Structure
 
 ```
 ngwenya/
-├── frontend/           # React Router v7 SSR application
+├── .vscode/            # VSCode configuration
+├── client/             # React Router v7 SSR application
 │   ├── app/           # App routes and components
 │   ├── components/    # Reusable UI components
 │   ├── styles/        # Global styles and Tailwind config
 │   ├── lib/          # Utility functions and configurations
 │   ├── types/        # TypeScript type definitions
-│   ├── wrangler.toml # Cloudflare Workers configuration
+│   ├── biome.json    # Client-specific Biome configuration
 │   └── tests/        # Frontend test files
-├── backend/           # Strapi CMS backend
+├── server/            # Strapi CMS backend
 │   ├── api/          # API endpoints and controllers
 │   ├── components/   # Reusable Strapi components
 │   ├── config/       # Strapi configuration
 │   ├── extensions/   # Strapi extensions
 │   ├── middlewares/  # Custom middlewares
 │   ├── policies/     # Access control policies
-│   ├── wrangler.toml # Cloudflare Workers configuration
+│   ├── biome.json    # Server-specific Biome configuration
 │   └── public/       # Static assets for Strapi
-└── docs/             # Project documentation
+├── docs/             # Project documentation
+├── docker-compose.yml # Docker development environment
+├── Makefile          # Development commands
+├── biome.json        # Root Biome configuration
+├── .biomeignore      # Biome ignore patterns
+└── package.json      # Root package.json (monorepo)
 ```
 
 ## 🌍 Community

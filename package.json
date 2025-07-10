@@ -1,0 +1,33 @@
+{
+  "name": "ngwenya-strapi",
+  "private": true,
+  "version": "0.1.0",
+  "description": "A Strapi application for Ngwenya Tech Blog",
+  "scripts": {
+    "build": "strapi build",
+    "develop": "strapi develop",
+    "start": "strapi start",
+    "strapi": "strapi"
+  },
+  "devDependencies": {},
+  "dependencies": {
+    "@strapi/strapi": "4.15.5",
+    "@strapi/plugin-users-permissions": "4.15.5",
+    "@strapi/plugin-i18n": "4.15.5",
+    "@strapi/plugin-documentation": "4.15.5",
+    "@strapi/plugin-graphql": "4.15.5",
+    "@strapi/provider-upload-local": "4.15.5",
+    "pg": "8.8.0"
+  },
+  "author": {
+    "name": "Ngwenya Tech"
+  },
+  "strapi": {
+    "uuid": "ngwenya-blog-uuid"
+  },
+  "engines": {
+    "node": ">=18.0.0 <=20.x.x",
+    "npm": ">=6.0.0"
+  },
+  "license": "MIT"
+}
