@@ -27,30 +27,60 @@ services:
   # Backend Services
   #######################
   
-  # Strapi Server - Development Mode
-  ngwenya_server:
-    container_name: ngwenya_server
-    image: node:22-alpine
-    working_dir: /usr/src/app
-    command: sh -c "npm install && npm run dev"
-    restart: always
+  # Strapi CMS
+  strapi:
+    container_name: strapi
+    build: .
+    image: strapi:latest
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DATABASE_CLIENT: ${DATABASE_CLIENT}
+      DATABASE_HOST: strapiDB
+      DATABASE_PORT: ${DATABASE_PORT}
+      DATABASE_NAME: ${DATABASE_NAME}
+      DATABASE_USERNAME: ${DATABASE_USERNAME}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      ADMIN_JWT_SECRET: ${ADMIN_JWT_SECRET}
+      APP_KEYS: ${APP_KEYS}
+      NODE_ENV: ${NODE_ENV}
+    volumes:
+      - ./config:/opt/app/config
+      - ./src:/opt/app/src
+      - ./package.json:/opt/package.json
+      - ./yarn.lock:/opt/yarn.lock
+      - ./.env:/opt/app/.env
+      - ./public/uploads:/opt/app/public/uploads
     ports:
       - "1337:1337"
-    volumes:
-      - ./server:/usr/src/app
-      - server_node_modules:/usr/src/app/node_modules
-    environment:
-      - NODE_ENV=development
-      - HOST=0.0.0.0
-      - PORT=1337
     networks:
       - ngwenya_network
     depends_on:
-      - ngwenya_client
+      - strapiDB
+
+  # PostgreSQL Database for Strapi
+  strapiDB:
+    container_name: strapiDB
+    platform: linux/amd64 #for platform error on Apple M1 chips
+    restart: unless-stopped
+    env_file: .env
+    image: postgres:16.0-alpine
+    environment:
+      POSTGRES_USER: ${DATABASE_USERNAME}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      POSTGRES_DB: ${DATABASE_NAME}
+    volumes:
+      - strapi-data:/var/lib/postgresql/data/ #using a volume
+      #- ./data:/var/lib/postgresql/data/ # if you want to use a bind folder
+    ports:
+      - "5432:5432"
+    networks:
+      - ngwenya_network
 
 volumes:
   client_node_modules:
-  server_node_modules:
+  strapi-data:
 
 networks:
   ngwenya_network:

@@ -1,7 +1,7 @@
 # Ngwenya Development Environment
 # ================================
 
-.PHONY: help up down restart logs logs-client logs-server build clean status shell-client shell-server
+.PHONY: help up down restart logs logs-client logs-strapi logs-db build clean status shell-client shell-strapi shell-db
 
 # Default target
 help: ## Show this help message
@@ -28,8 +28,11 @@ build: ## Build all services
 up-client: ## Start only the client service
 	docker-compose up -d ngwenya_client
 
-up-server: ## Start only the server service
-	docker-compose up -d ngwenya_server
+up-strapi: ## Start only the Strapi CMS service
+	docker-compose up -d strapi
+
+up-db: ## Start only the database service
+	docker-compose up -d strapiDB
 
 # Logs commands
 logs: ## Show logs for all services
@@ -38,8 +41,11 @@ logs: ## Show logs for all services
 logs-client: ## Show logs for client service
 	docker-compose logs -f ngwenya_client
 
-logs-server: ## Show logs for server service
-	docker-compose logs -f ngwenya_server
+logs-strapi: ## Show logs for Strapi CMS service
+	docker-compose logs -f strapi
+
+logs-db: ## Show logs for database service
+	docker-compose logs -f strapiDB
 
 # Status and monitoring
 status: ## Show status of all services
@@ -49,8 +55,11 @@ status: ## Show status of all services
 shell-client: ## Open shell in client container
 	docker-compose exec ngwenya_client sh
 
-shell-server: ## Open shell in server container
-	docker-compose exec ngwenya_server sh
+shell-strapi: ## Open shell in Strapi container
+	docker-compose exec strapi sh
+
+shell-db: ## Open shell in database container
+	docker-compose exec strapiDB psql -U ${DATABASE_USERNAME} -d ${DATABASE_NAME}
 
 # Cleanup commands
 clean: ## Stop services and remove volumes
@@ -60,9 +69,11 @@ clean-all: ## Stop services, remove volumes and images
 	docker-compose down -v --rmi all
 
 # Install dependencies
-install: ## Install dependencies in both services
+install: ## Install dependencies in client service
 	docker-compose exec ngwenya_client npm install
-	docker-compose exec ngwenya_server npm install
+
+install-client: ## Install dependencies in client only
+	docker-compose exec ngwenya_client npm install
 
 # Development workflow
 dev: up logs ## Start services and show logs
