@@ -1,6 +1,7 @@
-import { Link } from "react-router";
+import { Link, useLoaderData } from "react-router";
 import { Footer } from "../components/Footer";
 import { Header } from "../components/Header";
+import { api, formatDate, getStrapiImageUrl } from "../lib/api";
 
 export function meta() {
     return [
@@ -10,7 +11,80 @@ export function meta() {
     ];
 }
 
+export async function loader() {
+    try {
+        console.log('🔄 Fetching articles from Strapi...');
+
+        // Fetch articles and featured article
+        const [articlesResponse, featuredResponse] = await Promise.all([
+            api.getArticles({
+                pageSize: 6,
+                sort: ['publishedAt:desc'],
+                populate: ['cover', 'author', 'category']
+            }),
+            api.getFeaturedArticles(1)
+        ]);
+
+        console.log('✅ Articles fetched successfully:', {
+            articlesCount: articlesResponse.data.length,
+            featuredArticle: featuredResponse.data[0]?.title || 'None'
+        });
+
+        return {
+            articles: articlesResponse.data,
+            featuredArticle: featuredResponse.data[0] || null,
+            pagination: articlesResponse.meta.pagination
+        };
+    } catch (error) {
+        console.error('❌ Failed to fetch articles:', error);
+        // Return fallback data in case of API failure
+        return {
+            articles: [],
+            featuredArticle: null,
+            pagination: null,
+            error: error instanceof Error ? error.message : 'Unknown error'
+        };
+    }
+}
+
 export default function Articles() {
+    const { articles, featuredArticle, pagination, error } = useLoaderData<typeof loader>();
+
+    // Show error state if there's a connection issue
+    if (error) {
+        return (
+            <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+                <Header />
+                <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                    <div className="text-center">
+                        <h1 className="text-4xl font-bold text-red-600 mb-4">
+                            Connection Error
+                        </h1>
+                        <p className="text-xl text-gray-600 dark:text-gray-300 mb-8">
+                            Unable to connect to the backend server.
+                        </p>
+                        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 mb-8">
+                            <p className="text-red-800 dark:text-red-200">
+                                <strong>Error:</strong> {error}
+                            </p>
+                            <p className="text-red-600 dark:text-red-400 text-sm mt-2">
+                                Make sure your Strapi server is running on port 1337
+                            </p>
+                        </div>
+                        <button
+                            type="button"
+                            onClick={() => window.location.reload()}
+                            className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                        >
+                            Retry Connection
+                        </button>
+                    </div>
+                </main>
+                <Footer />
+            </div>
+        );
+    }
+
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
             <Header />
@@ -26,151 +100,164 @@ export default function Articles() {
                 </div>
 
                 {/* Featured Article */}
-                <div className="mb-16">
-                    <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden">
-                        <div className="md:flex">
-                            <div className="md:w-1/2">
-                                <div className="h-64 md:h-full bg-gradient-to-br from-blue-500 to-indigo-600"></div>
-                            </div>
-                            <div className="md:w-1/2 p-8">
-                                <div className="flex items-center mb-4">
-                                    <span className="bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-3 py-1 rounded-full text-sm font-medium">
-                                        Featured
-                                    </span>
+                {featuredArticle && (
+                    <div className="mb-16">
+                        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden">
+                            <div className="md:flex">
+                                <div className="md:w-1/2">
+                                    {featuredArticle.cover?.data ? (
+                                        <img
+                                            src={getStrapiImageUrl(featuredArticle.cover.data, 'medium')}
+                                            alt={featuredArticle.cover.data.alternativeText || featuredArticle.title}
+                                            className="h-64 md:h-full w-full object-cover"
+                                        />
+                                    ) : (
+                                        <div className="h-64 md:h-full bg-gradient-to-br from-blue-500 to-indigo-600"></div>
+                                    )}
                                 </div>
-                                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-                                    The Rise of Fintech in Malawi: A Digital Revolution
-                                </h2>
-                                <p className="text-gray-600 dark:text-gray-300 mb-6">
-                                    Exploring how mobile money and digital financial services are transforming
-                                    Malawi's economy and creating new opportunities for innovation.
-                                </p>
-                                <div className="flex items-center justify-between">
-                                    <div className="flex items-center space-x-3">
-                                        <div className="w-8 h-8 bg-gray-300 dark:bg-gray-600 rounded-full"></div>
-                                        <div>
-                                            <p className="text-sm font-medium text-gray-900 dark:text-white">John Banda</p>
-                                            <p className="text-xs text-gray-500 dark:text-gray-400">Dec 15, 2024</p>
-                                        </div>
+                                <div className="md:w-1/2 p-8">
+                                    <div className="flex items-center mb-4">
+                                        <span className="bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-3 py-1 rounded-full text-sm font-medium">
+                                            Featured
+                                        </span>
+                                        {featuredArticle.category?.data && (
+                                            <>
+                                                <span className="mx-2 text-gray-400">•</span>
+                                                <span className="text-sm text-gray-600 dark:text-gray-400">
+                                                    {featuredArticle.category.data.name}
+                                                </span>
+                                            </>
+                                        )}
                                     </div>
-                                    <Link
-                                        to="/articles/rise-of-fintech-malawi"
-                                        className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-                                    >
-                                        Read More
-                                    </Link>
+                                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+                                        {featuredArticle.title}
+                                    </h2>
+                                    <p className="text-gray-600 dark:text-gray-300 mb-6">
+                                        {featuredArticle.description}
+                                    </p>
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center space-x-3">
+                                            {featuredArticle.author?.data.avatar?.data ? (
+                                                <img
+                                                    src={getStrapiImageUrl(featuredArticle.author.data.avatar.data, 'thumbnail')}
+                                                    alt={featuredArticle.author.data.name}
+                                                    className="w-8 h-8 rounded-full object-cover"
+                                                />
+                                            ) : (
+                                                <div className="w-8 h-8 bg-gray-300 dark:bg-gray-600 rounded-full flex items-center justify-center">
+                                                    <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                                                        {featuredArticle.author?.data.name?.charAt(0) || 'A'}
+                                                    </span>
+                                                </div>
+                                            )}
+                                            <div>
+                                                <p className="text-sm font-medium text-gray-900 dark:text-white">
+                                                    {featuredArticle.author?.data.name || 'Anonymous'}
+                                                </p>
+                                                <p className="text-xs text-gray-500 dark:text-gray-400">
+                                                    {formatDate(featuredArticle.publishedAt)}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <Link
+                                            to={`/articles/${featuredArticle.slug}`}
+                                            className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                                        >
+                                            Read More
+                                        </Link>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                )}
 
                 {/* Articles Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {mockArticles.map((article) => (
-                        <article key={article.id} className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
-                            <div className="h-48 bg-gradient-to-br from-indigo-500 to-purple-600"></div>
-                            <div className="p-6">
-                                <div className="flex items-center mb-3">
-                                    <span className="bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-3 py-1 rounded-full text-sm">
-                                        {article.category}
-                                    </span>
-                                </div>
-                                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">
-                                    {article.title}
-                                </h3>
-                                <p className="text-gray-600 dark:text-gray-300 mb-4 text-sm">
-                                    {article.excerpt}
-                                </p>
-                                <div className="flex items-center justify-between">
-                                    <div className="flex items-center space-x-2">
-                                        <div className="w-6 h-6 bg-gray-300 dark:bg-gray-600 rounded-full"></div>
-                                        <div>
-                                            <p className="text-xs font-medium text-gray-900 dark:text-white">{article.author}</p>
-                                            <p className="text-xs text-gray-500 dark:text-gray-400">{article.date}</p>
-                                        </div>
+                {articles.length > 0 ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {articles.map((article) => (
+                            <article key={article.id} className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+                                {article.cover?.data ? (
+                                    <img
+                                        src={getStrapiImageUrl(article.cover.data, 'small')}
+                                        alt={article.cover.data.alternativeText || article.title}
+                                        className="h-48 w-full object-cover"
+                                    />
+                                ) : (
+                                    <div className="h-48 bg-gradient-to-br from-indigo-500 to-purple-600"></div>
+                                )}
+                                <div className="p-6">
+                                    <div className="flex items-center mb-3">
+                                        <span className="bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-3 py-1 rounded-full text-sm">
+                                            {article.category?.data.name || 'Uncategorized'}
+                                        </span>
                                     </div>
-                                    <Link
-                                        to={`/articles/${article.slug}`}
-                                        className="text-blue-600 dark:text-blue-400 hover:underline text-sm font-medium"
-                                    >
-                                        Read →
-                                    </Link>
+                                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">
+                                        {article.title}
+                                    </h3>
+                                    <p className="text-gray-600 dark:text-gray-300 mb-4 text-sm">
+                                        {article.description}
+                                    </p>
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center space-x-2">
+                                            {article.author?.data.avatar?.data ? (
+                                                <img
+                                                    src={getStrapiImageUrl(article.author.data.avatar.data, 'thumbnail')}
+                                                    alt={article.author.data.name}
+                                                    className="w-6 h-6 rounded-full object-cover"
+                                                />
+                                            ) : (
+                                                <div className="w-6 h-6 bg-gray-300 dark:bg-gray-600 rounded-full flex items-center justify-center">
+                                                    <span className="text-xs font-medium text-gray-600 dark:text-gray-400">
+                                                        {article.author?.data.name?.charAt(0) || 'A'}
+                                                    </span>
+                                                </div>
+                                            )}
+                                            <div>
+                                                <p className="text-xs font-medium text-gray-900 dark:text-white">
+                                                    {article.author?.data.name || 'Anonymous'}
+                                                </p>
+                                                <p className="text-xs text-gray-500 dark:text-gray-400">
+                                                    {formatDate(article.publishedAt)}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <Link
+                                            to={`/articles/${article.slug}`}
+                                            className="text-blue-600 dark:text-blue-400 hover:underline text-sm font-medium"
+                                        >
+                                            Read →
+                                        </Link>
+                                    </div>
                                 </div>
-                            </div>
-                        </article>
-                    ))}
-                </div>
+                            </article>
+                        ))}
+                    </div>
+                ) : (
+                    <div className="text-center py-12">
+                        <p className="text-gray-600 dark:text-gray-400 text-lg">
+                            No articles available at the moment.
+                        </p>
+                        <p className="text-gray-500 dark:text-gray-500 text-sm mt-2">
+                            Check back later for new content!
+                        </p>
+                    </div>
+                )}
 
                 {/* Load More */}
-                <div className="text-center mt-12">
-                    <button
-                        type="button"
-                        className="bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white px-8 py-3 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
-                    >
-                        Load More Articles
-                    </button>
-                </div>
+                {pagination && pagination.page < pagination.pageCount && (
+                    <div className="text-center mt-12">
+                        <button
+                            type="button"
+                            className="bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white px-8 py-3 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                        >
+                            Load More Articles ({pagination.total - (pagination.page * pagination.pageSize)} remaining)
+                        </button>
+                    </div>
+                )}
             </main>
 
             <Footer />
         </div>
     );
 }
-
-const mockArticles = [
-    {
-        id: 1,
-        title: "Digital Agriculture: Smart Farming in Rural Malawi",
-        slug: "digital-agriculture-smart-farming-rural-malawi",
-        excerpt: "How IoT sensors and mobile apps are helping smallholder farmers increase crop yields and optimize resource usage.",
-        category: "Agriculture Tech",
-        author: "Grace Phiri",
-        date: "Dec 12, 2024",
-    },
-    {
-        id: 2,
-        title: "Malawi's First Tech Unicorn: A Vision for 2030",
-        slug: "malawi-first-tech-unicorn-vision-2030",
-        excerpt: "Analyzing the potential for Malawi to produce its first billion-dollar tech company and what it would take.",
-        category: "Startup News",
-        author: "Michael Tembo",
-        date: "Dec 10, 2024",
-    },
-    {
-        id: 3,
-        title: "E-Government Success: Digital ID Rollout",
-        slug: "e-government-success-digital-id-rollout",
-        excerpt: "The successful implementation of Malawi's digital identity system and its impact on service delivery.",
-        category: "Government Tech",
-        author: "Sarah Mwale",
-        date: "Dec 8, 2024",
-    },
-    {
-        id: 4,
-        title: "EdTech Revolution: Online Learning Platforms",
-        slug: "edtech-revolution-online-learning-platforms",
-        excerpt: "How local EdTech startups are bridging the digital divide in Malawi's education sector.",
-        category: "Education",
-        author: "David Kanyama",
-        date: "Dec 5, 2024",
-    },
-    {
-        id: 5,
-        title: "Mobile Health Solutions Saving Lives",
-        slug: "mobile-health-solutions-saving-lives",
-        excerpt: "Innovative mobile health applications providing healthcare access to remote communities.",
-        category: "HealthTech",
-        author: "Mercy Chikwawa",
-        date: "Dec 3, 2024",
-    },
-    {
-        id: 6,
-        title: "Women in Tech: Breaking Barriers",
-        slug: "women-in-tech-breaking-barriers",
-        excerpt: "Celebrating female tech leaders and entrepreneurs who are driving change in Malawi's tech scene.",
-        category: "Diversity",
-        author: "Esther Banda",
-        date: "Dec 1, 2024",
-    },
-];

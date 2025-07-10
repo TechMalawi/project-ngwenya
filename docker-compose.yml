@@ -20,6 +20,7 @@ services:
     environment:
       - NODE_ENV=development
       - VITE_HOST=0.0.0.0
+      - VITE_STRAPI_URL=http://ngwenya_server:1337
     networks:
       - ngwenya_network
 
