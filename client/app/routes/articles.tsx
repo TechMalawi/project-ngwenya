@@ -3,6 +3,51 @@ import { Footer } from "../components/Footer";
 import { Header } from "../components/Header";
 import { api, formatDate, getStrapiImageUrl } from "../lib/api";
 
+// --- Minimal Strapi types for population helpers ---
+type StrapiEntity<T> = T | { data?: T | null } | null | undefined;
+
+type Author = {
+    id: number;
+    name: string;
+    avatar?: StrapiEntity<Cover>;
+};
+type Cover = {
+    url: string;
+    alternativeText?: string;
+};
+type Category = {
+    id: number;
+    name: string;
+};
+
+// --- Strapi population helpers ---
+// Handles both { field: {...} } and { field: { data: {...} } } formats
+function getPopulated<T>(field: StrapiEntity<T>): T | null {
+    if (!field) return null;
+    if (typeof field === 'object' && 'data' in field) {
+        // New Strapi format: { data: {...} }
+        return field.data ?? null;
+    }
+    // Legacy/flat format
+    return field as T;
+}
+
+function getAuthorAvatar(author: StrapiEntity<Author>): Cover | null {
+    const a = getPopulated(author);
+    if (!a) return null;
+    // Avatar can be nested or flat
+    return getPopulated(a.avatar);
+}
+
+function getCategoryName(category: StrapiEntity<Category>): string {
+    const c = getPopulated(category);
+    return c?.name || 'Uncategorized';
+}
+
+function getCoverImage(cover: StrapiEntity<Cover>): Cover | null {
+    return getPopulated(cover);
+}
+
 export function meta() {
     return [
         { title: "Articles - Ngwenya Tech Blog" },
@@ -24,6 +69,9 @@ export async function loader() {
             }),
             api.getFeaturedArticles(1)
         ]);
+
+
+        console.log(`🔄 Fetching completed. Processing data...${JSON.stringify(articlesResponse)}`);
 
         console.log('✅ Articles fetched successfully:', {
             articlesCount: articlesResponse.data.length,
@@ -105,10 +153,10 @@ export default function Articles() {
                         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden">
                             <div className="md:flex">
                                 <div className="md:w-1/2">
-                                    {featuredArticle.cover?.data ? (
+                                    {getCoverImage(featuredArticle.cover) ? (
                                         <img
-                                            src={getStrapiImageUrl(featuredArticle.cover.data, 'medium')}
-                                            alt={featuredArticle.cover.data.alternativeText || featuredArticle.title}
+                                            src={getStrapiImageUrl(getCoverImage(featuredArticle.cover), 'medium')}
+                                            alt={getCoverImage(featuredArticle.cover)?.alternativeText || featuredArticle.title}
                                             className="h-64 md:h-full w-full object-cover"
                                         />
                                     ) : (
@@ -120,11 +168,11 @@ export default function Articles() {
                                         <span className="bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-3 py-1 rounded-full text-sm font-medium">
                                             Featured
                                         </span>
-                                        {featuredArticle.category?.data && (
+                                        {getPopulated(featuredArticle.category) && (
                                             <>
                                                 <span className="mx-2 text-gray-400">•</span>
                                                 <span className="text-sm text-gray-600 dark:text-gray-400">
-                                                    {featuredArticle.category.data.name}
+                                                    {getCategoryName(featuredArticle.category)}
                                                 </span>
                                             </>
                                         )}
@@ -137,22 +185,22 @@ export default function Articles() {
                                     </p>
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center space-x-3">
-                                            {featuredArticle.author?.data.avatar?.data ? (
+                                            {getAuthorAvatar(featuredArticle.author) ? (
                                                 <img
-                                                    src={getStrapiImageUrl(featuredArticle.author.data.avatar.data, 'thumbnail')}
-                                                    alt={featuredArticle.author.data.name}
+                                                    src={getStrapiImageUrl(getAuthorAvatar(featuredArticle.author), 'thumbnail')}
+                                                    alt={getPopulated(featuredArticle.author)?.name}
                                                     className="w-8 h-8 rounded-full object-cover"
                                                 />
                                             ) : (
                                                 <div className="w-8 h-8 bg-gray-300 dark:bg-gray-600 rounded-full flex items-center justify-center">
                                                     <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                                                        {featuredArticle.author?.data.name?.charAt(0) || 'A'}
+                                                        {getPopulated(featuredArticle.author)?.name?.charAt(0) || 'A'}
                                                     </span>
                                                 </div>
                                             )}
                                             <div>
                                                 <p className="text-sm font-medium text-gray-900 dark:text-white">
-                                                    {featuredArticle.author?.data.name || 'Anonymous'}
+                                                    {getPopulated(featuredArticle.author)?.name || 'Anonymous'}
                                                 </p>
                                                 <p className="text-xs text-gray-500 dark:text-gray-400">
                                                     {formatDate(featuredArticle.publishedAt)}
@@ -177,10 +225,10 @@ export default function Articles() {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {articles.map((article) => (
                             <article key={article.id} className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
-                                {article.cover?.data ? (
+                                {getCoverImage(article.cover) ? (
                                     <img
-                                        src={getStrapiImageUrl(article.cover.data, 'small')}
-                                        alt={article.cover.data.alternativeText || article.title}
+                                        src={getStrapiImageUrl(getCoverImage(article.cover), 'small')}
+                                        alt={getCoverImage(article.cover)?.alternativeText || article.title}
                                         className="h-48 w-full object-cover"
                                     />
                                 ) : (
@@ -189,7 +237,7 @@ export default function Articles() {
                                 <div className="p-6">
                                     <div className="flex items-center mb-3">
                                         <span className="bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-3 py-1 rounded-full text-sm">
-                                            {article.category?.data.name || 'Uncategorized'}
+                                            {getCategoryName(article.category)}
                                         </span>
                                     </div>
                                     <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">
@@ -200,22 +248,22 @@ export default function Articles() {
                                     </p>
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center space-x-2">
-                                            {article.author?.data.avatar?.data ? (
+                                            {getAuthorAvatar(article.author) ? (
                                                 <img
-                                                    src={getStrapiImageUrl(article.author.data.avatar.data, 'thumbnail')}
-                                                    alt={article.author.data.name}
+                                                    src={getStrapiImageUrl(getAuthorAvatar(article.author), 'thumbnail')}
+                                                    alt={getPopulated(article.author)?.name}
                                                     className="w-6 h-6 rounded-full object-cover"
                                                 />
                                             ) : (
                                                 <div className="w-6 h-6 bg-gray-300 dark:bg-gray-600 rounded-full flex items-center justify-center">
                                                     <span className="text-xs font-medium text-gray-600 dark:text-gray-400">
-                                                        {article.author?.data.name?.charAt(0) || 'A'}
+                                                        {getPopulated(article.author)?.name?.charAt(0) || 'A'}
                                                     </span>
                                                 </div>
                                             )}
                                             <div>
                                                 <p className="text-xs font-medium text-gray-900 dark:text-white">
-                                                    {article.author?.data.name || 'Anonymous'}
+                                                    {getPopulated(article.author)?.name || 'Anonymous'}
                                                 </p>
                                                 <p className="text-xs text-gray-500 dark:text-gray-400">
                                                     {formatDate(article.publishedAt)}
